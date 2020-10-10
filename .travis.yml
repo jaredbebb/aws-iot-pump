@@ -1,27 +1,30 @@
 language: python
+
 python:
-- '2.7'
+  - '2.7'
+  
 sudo: false
+
 cache:
   directories:
-  - "~/.platformio"
+    - ~/.platformio
 env:
-  matrix:
   - PLATFORMIO_CI_SRC=src/
-  global:
-    secure: O6LjiU4SLIzM+N0WfevYzpkKKvIimeM/mGlAkFDTKoLrjRH4jHhH7V357QiSk9U0rKUqlPljj1T0NL2dJXXdYM4f/JVP3jjRaTqZU/ZTOCXELwMPJDYqEdjKm1RETPViE9K57NQiIzRuHK/+KwZWjcCQGH+TVcZwOHUt9DSFEM0hHwLIQwQ3cVImij7lUi9qFwaVXIlUa9kTbgGTfeyCcY4tgJkWTExurmc4/SShgDiCkn7epmDNlfDJW28dySHg/RZUEZKbJhoMooUdIrRF2uC8QM9Ub5D2KsUGi23IzF6Ke/ZTJYE7a1jnMVwSmf5HTQ9e7gmQpWqea0Zqn4/uw2QruE+XnIyWH6e0xUU5ol3k7aN1dlCFulekK3/HMpoSUQY1f3i4hU31SRbLGVm9h6NxPDzNIEfj5f20jxH1VRW98lFOiUBi2+D/T84oUfL7ITpcYFVm9NQwz5kI/krhfZOqFiA0eEbQOMEiOeft1qMDP2kNCkbhq6UWnGj3/R+LQ4QdXAiBdDUP0e3vSPknFgj/1I5I8L3Gfyi+RYMATzP97J808G/XxwWie2g/HiNr+eaS4lj9aRgZaqqNVmN+yZQPRqOWTkGKELugISH1g1btjEF0Fkoihlw5rthbJjdk+qjYCakEAN52jB3PjU74ZfDIMeT0fPSwmZ74FOSqreE=
+
 install:
-- pip install -U platformio
+  - pip install -U platformio
+
 script:
-- platformio run -e esp12e_dev
+  - platformio run -e esp12e_dev
+
 deploy:
   on:
     repo: jaredbebb/aws-iot-pump
     all_branches: true
-    condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
+    condition: $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$
   skip_cleanup: true
   provider: releases
   overwrite: true
   api_key:
-    secure: "$GH_REPO_TOKEN"
+    secure: ypC157aJ3Z16ildGTgM7ClnQO5UAu926n5fdNu8nEDwZLfB2LAFV1DgD7ZwKvmLrahuC5KBulfpIgZypNnK8Lenu2GtKJMJTQeOd9abcbqyBvt1xXuJd6sEBY4EEXYdYkc1z2Viuqs679AyAjFmI2edt7Gos+ZfX3pqfItgV9fU0Di3QAyj9QkvZgrkoQ61GFzyy1j142aAO/EplXKcUUbDwGcnYrTNBaoeeb6PxcYUi6pvZKBAVoFqZXxneP427S8YHwaRg0RKQBeKZ7Y+BePgvGvUbNEF3aOROLFi7R7TiuTm30X8BqW7xoBjQXv8W86D5dM3NQFI/Qj3W0LRwucOxrBY+v4TP1Pt2sOoOVmBLOLGZ/On2OAryfJS679/f5fZVaq73NWiPcAwX3QsGt+pxHhgrhxwvkFHL7wYrHcrwgiuXBtjmQwnQCrECVZuirwTMdYViXlXpANJjvIfd1TV5/iXbw1FrBEMGNR4VVWyOwU8oVaDBlC7kSQfuLJ4AwJHG0p++N8BMtKSxtkZTMih7f4C4r7Tp/aAtxzL0vWyWGSN+a7gAuVL7ujcIsTUWdOJmFCALoDokohQ2ijrUGK1LaXIhO7buEuakFX0zg7/jujV4qXrOMJyDtS42+hBZNpTV1IIRV13oXiH5LTBmfj5ON3C8eGYjxLlFZaaLRXQ=
   file: ".pio/build/esp12e_dev/firmware.bin"
