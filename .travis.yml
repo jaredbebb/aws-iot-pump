@@ -1,0 +1,36 @@
+# Whitelist
+branches:
+  only:
+  - master
+
+language: python
+
+python:
+  - '2.7'
+  
+sudo: false
+
+cache:
+  directories:
+    - ~/.platformio
+env:
+  - PLATFORMIO_CI_SRC=src/
+
+install:
+  - pip install -U platformio
+  - platformio lib install 567 562
+
+script:
+  - platformio run -e esp12e
+
+deploy:
+  on:
+    repo: jaredbebb/aws-iot-pump
+    all_branches: true
+    condition: $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$
+  skip_cleanup: true
+  provider: releases
+  overwrite: true
+  api_key:
+    secure: $GH_REPO_TOKEN
+  file: ".pio/build/mkrwifi1010/firmware.bin"
