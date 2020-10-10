@@ -1,8 +1,3 @@
-# Whitelist
-branches:
-  only:
-  - master
-
 language: python
 
 python:
@@ -33,4 +28,4 @@ deploy:
   overwrite: true
   api_key:
     secure: $GH_REPO_TOKEN
-  file: ".pio/build/mkrwifi1010/firmware.bin"
+  file: ".pio/build/esp12e_dev/firmware.bin"
