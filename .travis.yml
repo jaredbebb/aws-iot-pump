@@ -13,7 +13,6 @@ env:
 
 install:
   - pip install -U platformio
-  - platformio lib install 567 562
 
 script:
   - platformio run -e esp12e_dev
