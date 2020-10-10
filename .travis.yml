@@ -1,30 +1,27 @@
 language: python
-
 python:
-  - '2.7'
-  
+- '2.7'
 sudo: false
-
 cache:
   directories:
-    - ~/.platformio
+  - "~/.platformio"
 env:
+  matrix:
   - PLATFORMIO_CI_SRC=src/
-
+  global:
+    secure: O6LjiU4SLIzM+N0WfevYzpkKKvIimeM/mGlAkFDTKoLrjRH4jHhH7V357QiSk9U0rKUqlPljj1T0NL2dJXXdYM4f/JVP3jjRaTqZU/ZTOCXELwMPJDYqEdjKm1RETPViE9K57NQiIzRuHK/+KwZWjcCQGH+TVcZwOHUt9DSFEM0hHwLIQwQ3cVImij7lUi9qFwaVXIlUa9kTbgGTfeyCcY4tgJkWTExurmc4/SShgDiCkn7epmDNlfDJW28dySHg/RZUEZKbJhoMooUdIrRF2uC8QM9Ub5D2KsUGi23IzF6Ke/ZTJYE7a1jnMVwSmf5HTQ9e7gmQpWqea0Zqn4/uw2QruE+XnIyWH6e0xUU5ol3k7aN1dlCFulekK3/HMpoSUQY1f3i4hU31SRbLGVm9h6NxPDzNIEfj5f20jxH1VRW98lFOiUBi2+D/T84oUfL7ITpcYFVm9NQwz5kI/krhfZOqFiA0eEbQOMEiOeft1qMDP2kNCkbhq6UWnGj3/R+LQ4QdXAiBdDUP0e3vSPknFgj/1I5I8L3Gfyi+RYMATzP97J808G/XxwWie2g/HiNr+eaS4lj9aRgZaqqNVmN+yZQPRqOWTkGKELugISH1g1btjEF0Fkoihlw5rthbJjdk+qjYCakEAN52jB3PjU74ZfDIMeT0fPSwmZ74FOSqreE=
 install:
-  - pip install -U platformio
-
+- pip install -U platformio
 script:
-  - platformio run -e esp12e_dev
-
+- platformio run -e esp12e_dev
 deploy:
   on:
     repo: jaredbebb/aws-iot-pump
     all_branches: true
-    condition: $TRAVIS_TAG =~ ^[0-9]+\.[0-9]+\.[0-9]+$
+    condition: "$TRAVIS_TAG =~ ^[0-9]+\\.[0-9]+\\.[0-9]+$"
   skip_cleanup: true
   provider: releases
   overwrite: true
   api_key:
-    secure: $GH_REPO_TOKEN
+    secure: "$GH_REPO_TOKEN"
   file: ".pio/build/esp12e_dev/firmware.bin"
