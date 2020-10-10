@@ -21,7 +21,7 @@ install:
   - platformio lib install 567 562
 
 script:
-  - platformio run -e esp12e
+  - platformio run -e esp12e_dev
 
 deploy:
   on:
