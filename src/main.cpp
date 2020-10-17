@@ -2,8 +2,8 @@
 #include <Ticker.h>
 
 Ticker pumpticker;
-unsigned long period = 30000;//14400*1000;
-unsigned long execution = 15000;//20*1000;
+unsigned long period = 14400*1000;
+unsigned long execution = 20*1000;
 int relayPin = D8;
 int state;
 
@@ -18,7 +18,7 @@ void setup() {
     delay(5000);
     Serial.printf("Starting up. time:%6ld \n",millis());
     pinMode(relayPin, OUTPUT);
-    state = 0;
+    state = 1;
     pumpticker.attach_ms_scheduled(period, relay_pin_state);
 }
 
