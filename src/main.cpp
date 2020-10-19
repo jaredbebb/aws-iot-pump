@@ -28,6 +28,7 @@
 #include <Ticker.h>
 
 #include "secrets.h"
+#include "aws_root_certificate.h"
 
 extern "C" {
   #include "user_interface.h"
@@ -121,7 +122,7 @@ void subscribe () {
 void sendmessage () {
     //send a message   
     char buf[100];
-    strcpy(buf, "{\"state\":{\"reported\":{\"on\": true}, \"desired\":{\"on\": false}}}");   
+    strcpy(buf, "{\"state\":{\"reported\":{\"on\": true}, \"desired\":{\"on\": true}}}");   
     int rc = client.publish(aws_topic, buf);
     Serial.printf("Client publish result:%d \n",rc);
 }
