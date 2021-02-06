@@ -59,7 +59,7 @@ char* generateClientID () {
 int arrivedcount = 0;
 
 Ticker pumpticker;
-unsigned long period = 14400*1000;
+unsigned long period = 60 * 1000;//14400*1000;
 unsigned long execution = 20*1000;
 int relayPin = D8;
 int state;
@@ -119,7 +119,7 @@ void subscribe () {
 }
 
 //send a message to a mqtt topic
-void sendmessage () {
+void sendmessage() {
     //send a message   
     char buf[100];
     strcpy(buf, "{\"state\":{\"reported\":{\"on\": true}, \"desired\":{\"on\": true}}}");   
@@ -197,15 +197,21 @@ void loop() {
         digitalWrite(relayPin, HIGH);
         Serial.printf("digitalWrite(relayPin, HIGH) time:%6ld \n",millis());
         state = 0;
+    
+        //keep the mqtt up and running
+        if (awsWSclient.connected ()) {    
+            Serial.println("client was connected");
+            client.loop ();
+            subscribe ();
+            sendmessage (); 
+        } else {
+          //handle reconnection
+          while(!connect()){
+            yield();
+          }
+            Serial.println("client was not connected");
+            subscribe ();
+            sendmessage (); 
+        }
     }
-
-  //keep the mqtt up and running
-  if (awsWSclient.connected ()) {    
-      client.loop ();
-  } else {
-    //handle reconnection
-    if (connect ()){
-      subscribe ();      
-    }
-  }
 }
