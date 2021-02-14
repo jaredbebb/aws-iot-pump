@@ -7,6 +7,7 @@
 #include <ESP8266WiFiMulti.h>
 #include "aws_root_certificate.h"
 
+
 //# of connections
 long connections = 0;
 
@@ -39,7 +40,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
 }
 
 //subscribe to a mqtt topic
-void Connection::subscribe () {
+void Connection::subscribe(){
     client.setCallback(callback);
     client.subscribe(aws_topic);
    //subscript to a topic
@@ -47,7 +48,7 @@ void Connection::subscribe () {
 }
 
 //send a message to a mqtt topic
-bool Connection::sendmessage() {
+bool Connection::sendmessage(){
     //send a message   
     char buf[100];
     
@@ -57,7 +58,7 @@ bool Connection::sendmessage() {
     return rc;
 }
 
-void setClock() {
+void setClock(){
   configTime(3 * 3600, 0, "pool.ntp.org", "time.nist.gov");
 
   Serial.print("Waiting for NTP time sync: ");
@@ -74,7 +75,7 @@ void setClock() {
   Serial.print(asctime(&timeinfo));
 }
 
-bool Connection::connect () {
+bool Connection::connect(){
     if (client.connected()) {    
         client.disconnect();
     }  
