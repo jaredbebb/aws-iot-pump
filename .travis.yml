@@ -15,7 +15,7 @@ install:
   - pip install -U platformio
 
 script:
-  - platformio run -e esp12e_dev
+  - platformio run -e aws-iot-pump_dev
 
 deploy:
   on:

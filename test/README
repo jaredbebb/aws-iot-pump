@@ -11,4 +11,5 @@ More information about PlatformIO Unit Testing:
 - https://docs.platformio.org/page/plus/unit-testing.html
 
 To run tests:
-platformio.exe test --environment 'embeddedtest'
+platformio.exe test --environment 'flash_embedded_test'
+platformio.exe test --environment 'connect_embedded_test'
