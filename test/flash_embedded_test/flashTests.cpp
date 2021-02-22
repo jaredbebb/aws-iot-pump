@@ -1,65 +1,96 @@
 #include <Arduino.h>
 #include <unity.h>
 #include <flasher.h>
+#include <credential_utility.h>
 
 extern "C" {
 #include "user_interface.h"
 }
 
-
-/***
- * Test flashing
- ***/
-ESP8266CredentialFlasher credential_flasher(0x00074000);
-
-char buff [SPI_FLASH_SEC_SIZE / 4];
-static uint32_t rbuff[SPI_FLASH_SEC_SIZE / 4];
-
-uint32_t  base_addr = 0x00074000;
-
+uint32_t base_addr = 0x00074000;
 
 /**
  * Test Flash Erase, Read, Write
  **/
-void TestSPIReadSuccessfulAfterReflash(){  
-    memset(rbuff, 0, sizeof(rbuff));
-    spi_flash_read(base_addr, rbuff, sizeof(rbuff));
-    credential_flasher.read();
-    for (int i = 0; i < credential_flasher.size_r_buff(); i++) {
-        TEST_ASSERT_EQUAL_CHAR(credential_flasher.get_r_buff(i), buff[i] );
-    }
- }
+void TestSPIEraseWriteRead(){
+    ESP8266CredentialFlasher credential_flasher(base_addr);
+    char buff [SPI_FLASH_SEC_SIZE / 4];
 
- void TestSPIEraseWriteRead(){
+    // fill global char [] buff with default value
+    std::fill_n(buff, sizeof(buff)/sizeof(buff[0]), 'k' );
+
     credential_flasher.erase();
     credential_flasher.write(buff, sizeof(buff));
     credential_flasher.read();
     for (int i = 0; i < credential_flasher.size_r_buff(); i++) {
-         TEST_ASSERT_EQUAL_CHAR(credential_flasher.get_r_buff(i),'k');
+         TEST_ASSERT_EQUAL_CHAR(buff[i], credential_flasher.get_r_buff(i));
     }
  }
 
+
 void TestFlashUtilityReadWrittenSequence(){
-    //FlashUtility fu(credential_flasher);
-    //std::vector<char> credentials = {'h','e','l','l','o', 'w','o','r','l','d'};
-    //bool result = fu.uploadCredentials(credentials);
+    
+    ESP8266CredentialFlasher credential_flasher(base_addr);
+    FlashUtility fu;
 
-    //for(std::vector<char>::iterator it = credentials.begin(); it != credentials.end(); ++it ){
-        //Serial.println(credential_flasher.get_r_buff(*it));
-    //}
+    char delimeter = ';';
+    char buff [SPI_FLASH_SEC_SIZE / 4];
+    std::fill_n(buff, sizeof(buff), delimeter );
 
-    TEST_ASSERT(0);
+    char passw[]  = {'h','e','l','l','o', 'w','o','r','l','d'};
+
+    std::copy(passw, passw+sizeof(passw)/sizeof(passw)[0],buff);
+    
+    credential_flasher.erase();
+    bool result = fu.writeCredentials(buff, sizeof(buff), & credential_flasher);
+
+    credential_flasher.read();
+    for(int i = 0; i < sizeof(buff); i++){
+        TEST_ASSERT_EQUAL_CHAR(buff[i], credential_flasher.get_r_buff(i) );
+        Serial.printf("%c ",credential_flasher.get_r_buff(i));
+    }
+    Serial.println();
+}
+
+void TestCredentialUtilityConstruct(){
+    char delimeter = ';';
+    char buff [SPI_FLASH_SEC_SIZE / 4];
+    std::fill_n(buff, sizeof(buff), delimeter );
+
+    char header[] = {'<','<','<','<'};
+    char passw[]  = {'h','e','l','l','o', 'w','o','r','l','d'};
+    char footer[] = {'>','>','>','>'};
+
+    CredentialUtility cu(sizeof(header), sizeof(footer), sizeof(passw),sizeof(buff));
+    cu.construct(header,footer,passw,delimeter,buff);
+
+    TEST_ASSERT_EQUAL_CHAR(header[0], buff[0]);
+}
+
+void TestCredentialUtilityExtract(){
+    char delimeter = ';';
+    char buff [SPI_FLASH_SEC_SIZE / 4];
+    std::fill_n(buff, sizeof(buff), delimeter );
+
+    char header[] = {'<','<','<','<'};
+    char passw[]  = {'h','e','l','l','o', 'w','o','r','l','d'};
+    char footer[] = {'>','>','>','>'};
+
+    CredentialUtility cu(sizeof(header), sizeof(footer), sizeof(passw),sizeof(buff));
+    cu.construct(header,footer,passw,delimeter,buff);
+
+    char extract_buff [sizeof(passw)];
+    cu.extract(buff, extract_buff);
+    for(int i = 0; i < sizeof(passw); i++){
+        TEST_ASSERT_EQUAL_CHAR(passw[i], extract_buff[i]);
+        Serial.printf("passw[i]=%c extract_buff[i]=%c \n",passw[i], extract_buff[i] );
+    }
 }
 
 void setup() {
     Serial.begin(115200);
     delay(1000); 
     Serial.println("Setting up tests\n");
-    //char buff [] = {'h','e','l','l','o','_', 'w','o','r','l','d','!'};
-    
-    for (uint32_t i = 0; i < sizeof(buff)/sizeof(buff[0]); ++i) {
-        buff[i] =  'k';
-    }
 }
 
 uint16_t flag = 1;
@@ -68,9 +99,9 @@ void loop(){
         Serial.println(F("loop test"));
         UNITY_BEGIN();
         RUN_TEST(TestSPIEraseWriteRead);
-        RUN_TEST(TestSPIReadSuccessfulAfterReflash);
-        //RUN_TEST(TestSPIEraseWriteRead);
-        //RUN_TEST(TestFlashUtilityReadWrittenSequence);
+        RUN_TEST(TestFlashUtilityReadWrittenSequence);
+        RUN_TEST(TestCredentialUtilityConstruct);
+        RUN_TEST(TestCredentialUtilityExtract);
         UNITY_END();
         delay(2000);
         flag = 0;

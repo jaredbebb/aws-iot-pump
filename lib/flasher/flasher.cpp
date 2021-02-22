@@ -16,12 +16,8 @@ void ESP8266CredentialFlasher::read() {
     spi_flash_read(base_addr, (uint32*) r_buff_, sizeof(r_buff_));
 }
 
-void ESP8266CredentialFlasher::write(char * w_buff, uint32 buff_size) const{
-    for(int i = 0; i < 12; i++){
-        Serial.printf("w_buff[i] = %c; Size of w_buff = %d \n", w_buff[i], buff_size);
-    }
-    printf("writing at %x\n", base_addr);
-    spi_flash_write(base_addr, reinterpret_cast<uint32 *>(w_buff), SPI_FLASH_SEC_SIZE / 4);
+int ESP8266CredentialFlasher::write(char * w_buff, uint32 buff_size) const{
+    return spi_flash_write(base_addr, reinterpret_cast<uint32 *>(w_buff), buff_size);
 }
 
 void ESP8266CredentialFlasher::erase() const{
@@ -40,22 +36,10 @@ char ESP8266CredentialFlasher::get_r_buff(uint32_t i) const{
     return r_buff_[i];
 }
 
-FlashUtility::FlashUtility(ESP8266CredentialFlasher credential_flasher){
-    credential_flasher_ = & credential_flasher;
-}
-
 //Utility to loop over list and flash to memory in csv format
-bool FlashUtility::uploadCredentials(std::vector<char> creds){
-    for(std::vector<char>::iterator it = creds.begin(); it != creds.end(); ++it )
-    {
-        //credential_flasher_->write(*it);
-
-    }
+bool FlashUtility::writeCredentials(char * w_buff, uint32 buff_size, ESP8266CredentialFlasher * credential_flasher){
+    credential_flasher->write(w_buff, buff_size);
     return false;
 }
 
-FlashUtility::~FlashUtility(){
-    delete credential_flasher_;
-    credential_flasher_ = 0;
-}
 

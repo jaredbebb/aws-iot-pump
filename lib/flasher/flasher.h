@@ -1,11 +1,9 @@
-#include <vector>
-
 class ESP8266CredentialFlasher{
     public:
         ESP8266CredentialFlasher(uint32_t _base_addr);
 
         void read() ;
-        void write(char * w_buff, uint32 buff_size) const;
+        int write(char * w_buff, uint32 buff_size) const;
         void erase() const;
         unsigned long size_r_buff() const;
         unsigned long size_w_buff() const;
@@ -19,11 +17,5 @@ class ESP8266CredentialFlasher{
 
 class FlashUtility{
     public:
-        FlashUtility(ESP8266CredentialFlasher credential_flasher);
-        ~FlashUtility();
-
-        bool uploadCredentials(std::vector<char> creds);
-
-    private:
-        ESP8266CredentialFlasher * credential_flasher_ = 0;
+        bool writeCredentials(char * w_buff, uint32 buff_size, ESP8266CredentialFlasher * credential_flasher);
 };
