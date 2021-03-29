@@ -13,3 +13,6 @@ More information about PlatformIO Unit Testing:
 To run tests:
 platformio.exe test --environment 'flash_embedded_test'
 platformio.exe test --environment 'connect_embedded_test'
+
+Flash credentials to board
+platformio.exe test --environment 'flash_credentials'

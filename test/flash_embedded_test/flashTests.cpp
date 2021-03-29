@@ -47,7 +47,6 @@ void TestFlashUtilityReadWrittenSequence(){
     credential_flasher.read();
     for(int i = 0; i < sizeof(buff); i++){
         TEST_ASSERT_EQUAL_CHAR(buff[i], credential_flasher.get_r_buff(i) );
-        Serial.printf("%c ",credential_flasher.get_r_buff(i));
     }
     Serial.println();
 }
@@ -63,7 +62,6 @@ void TestCredentialUtilityConstruct(){
 
     CredentialUtility cu(sizeof(header), sizeof(footer), sizeof(passw),sizeof(buff));
     cu.construct(header,footer,passw,delimeter,buff);
-
     TEST_ASSERT_EQUAL_CHAR(header[0], buff[0]);
 }
 

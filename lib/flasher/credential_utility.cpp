@@ -15,20 +15,17 @@ bool CredentialUtility::construct(char * header, char * footer, char * passwords
     int i = 0;
     for( i; i < header_size_; i ++){
         buff[i] = header[i];
-        Serial.println(buff[i]);
     }
 
     //construct passwords
     int p = 0;
     for(p; p < passwords_size_; p++){
         buff[p+i] = passwords[p];
-        Serial.println(buff[p+i]);
     }
 
     //construct footer
     for(int k = 0; k < footer_size_; k ++){
         buff[k+p+i] = footer[k];
-        Serial.println(buff[k+p+i]);
     }
 }
 
